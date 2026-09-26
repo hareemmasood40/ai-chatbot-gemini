@@ -11,14 +11,31 @@ the Gemini API's built-in chat-session feature), so you can ask natural follow-u
 like "what's the population of that city?" after asking about a capital.
 
 ## Tools
-Python, Google Gemini API (`google-genai`), `python-dotenv`
+Python, Google Gemini API (`google-genai`), `python-dotenv`, Streamlit
 
-## How it works
+## How it works (command-line version — `chatbot.py`)
 1. Loads a secret API key safely from a `.env` file (never hardcoded, never committed to
    GitHub — protected by `.gitignore`)
 2. Sends whatever the user types to Google's Gemini model via the API
 3. Prints the model's response
 4. Repeats until the user types `quit`
+
+## Web app version — `app.py` (Streamlit)
+The same chatbot, rebuilt as a real web app instead of a terminal:
+```
+streamlit run app.py
+```
+- **Persistent memory** — conversations are saved to a file and survive closing/reopening
+  the app (the command-line version only remembers within one run)
+- **Multiple saved conversations** — a sidebar lists every past conversation, with a
+  "New Chat" button to start fresh without losing older ones (like ChatGPT/Claude)
+- **Personality selector** — pick a tone (Friendly Assistant / Data Analyst Mentor / Concise
+  Expert) via the Gemini API's system-instruction feature; each genuinely changes how the
+  model responds
+- **Summarizer mode** — paste in any text and get a short bullet-point summary back, a
+  second common real AI use case beyond chat
+- Chat history is saved to `chat_history.json`, which is excluded from Git (same reasoning
+  as the API key — it holds real personal conversations, not just test data)
 
 ## Real problems I ran into and fixed
 - **A deprecated model name.** My first model choice (`gemini-2.5-flash`) had been retired
@@ -39,5 +56,5 @@ constraint of building on top of free-tier AI services, worth knowing as an AI E
 rather than something to be surprised by.
 
 ## What I'd do next
-- Add a simple system prompt to give the chatbot a specific personality or role
-- Build a small web interface instead of the command line
+- Deploy the web app live so anyone can try it via a link, not just run it locally
+- Add a "regenerate response" option and better formatting for code/tables in replies
