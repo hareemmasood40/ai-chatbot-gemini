@@ -1,5 +1,7 @@
 # Simple AI Chatbot
 
+**🔗 Try it live: [hareem-ai-chatbot.streamlit.app](https://hareem-ai-chatbot.streamlit.app)**
+
 A command-line chatbot that talks to a real AI model (Google's Gemini) — my first hands-on
 project working directly with LLMs (Large Language Models), moving from data analysis into
 AI engineering.
@@ -56,5 +58,6 @@ constraint of building on top of free-tier AI services, worth knowing as an AI E
 rather than something to be surprised by.
 
 ## What I'd do next
-- Deploy the web app live so anyone can try it via a link, not just run it locally
 - Add a "regenerate response" option and better formatting for code/tables in replies
+- Add persistent memory on the deployed version too (currently disabled there, since a
+  shared server would otherwise mix up different visitors' conversations)
