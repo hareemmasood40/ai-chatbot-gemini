@@ -7,7 +7,11 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-load_dotenv("03_projects/ai_chatbot_project/.env")
+# Build file paths from this script's own folder, so they work both locally (run from the
+# Data_AI root) and on Streamlit Cloud (where the repo itself is the root folder).
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_FILE = os.path.join(APP_DIR, ".env")
+load_dotenv(ENV_FILE)
 
 # Locally: reads from the .env file. When deployed on Streamlit Cloud: reads from
 # the "Secrets" the app is configured with there (there's no .env file on the server).
@@ -17,7 +21,12 @@ if not api_key:
 
 client = genai.Client(api_key=api_key)
 MODEL = "gemini-flash-lite-latest"
-HISTORY_FILE = "03_projects/ai_chatbot_project/chat_history.json"
+HISTORY_FILE = os.path.join(APP_DIR, "chat_history.json")
+
+# Only save conversations to disk when running locally (where the .env file exists).
+# On Streamlit Cloud every visitor shares the same server, so saving to one file would
+# show each visitor everyone else's chats. There, chats live only in that visitor's session.
+SAVE_TO_DISK = os.path.exists(ENV_FILE)
 
 PERSONALITIES = {
     "Friendly Assistant": "You are a warm, friendly, helpful assistant. Keep answers clear and concise.",
@@ -31,12 +40,14 @@ st.title("🤖 AI Chatbot (Gemini)")
 
 # ---------- Persistent storage: multiple saved conversations ----------
 def load_all():
-    if os.path.exists(HISTORY_FILE):
+    if SAVE_TO_DISK and os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {"conversations": {}, "current": None}
 
 def save_all(data):
+    if not SAVE_TO_DISK:
+        return
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
