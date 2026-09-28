@@ -9,7 +9,13 @@ from google.genai import types
 
 load_dotenv("03_projects/ai_chatbot_project/.env")
 
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+# Locally: reads from the .env file. When deployed on Streamlit Cloud: reads from
+# the "Secrets" the app is configured with there (there's no .env file on the server).
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    api_key = st.secrets.get("GEMINI_API_KEY")
+
+client = genai.Client(api_key=api_key)
 MODEL = "gemini-flash-lite-latest"
 HISTORY_FILE = "03_projects/ai_chatbot_project/chat_history.json"
 
